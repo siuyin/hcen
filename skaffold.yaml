@@ -1,0 +1,36 @@
+apiVersion: skaffold/v1beta11
+kind: Config
+build:
+  artifacts:
+  - image: siuyin/hcen-pos # Point of Sale
+    context: .
+    docker: 
+      dockerfile: hcen-pos.dockerfile
+  - image: siuyin/hcen-rec # Recommendations and price check
+    context: .
+    docker: 
+      dockerfile: hcen-rec.dockerfile
+deploy:
+  helm:
+    releases:
+    - name: hcen-dev
+      chartPath: helm-charts/hcen
+      values:
+        image: siuyin/hcen
+      valuesFiles:
+        - helm-charts/hcen/values-dev.yaml
+      setValues:
+        stage: Test
+profiles:
+- name: prod
+  deploy:
+    helm:
+      releases:
+      - name: hcen-prod
+        chartPath: helm-charts/hcen
+        values:
+          image: siuyin/hcen
+        valuesFiles:
+          - helm-charts/hcen/values-prod.yaml
+        setValues:
+          stage: Live
