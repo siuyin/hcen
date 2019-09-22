@@ -1,0 +1,2 @@
+NATS Streaming server.
+See https://nats.io for details.

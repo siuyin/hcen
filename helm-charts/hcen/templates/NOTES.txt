@@ -1,0 +1,4 @@
+HCEN: Hyper-Converged Edge Node
+
+A Hyper-Converged Edge Node processes business transactional data
+and censor data at the location where the data is created or captured.

@@ -1,0 +1,67 @@
+# We do not need to use local persistent volumes here.
+# Instead we could just schedule the pod to run
+# directly on the node and use a hostPath volume.
+#
+# This local-volume is an example where a pod need
+# not be manually bound to a node.
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-pv
+  labels:
+    pvname: {{ .Release.Name }}-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: "/data/{{ .Release.Name }}"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - {{ .Values.statefulHostName }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-storage
+  selector:
+    matchLabels:
+      pvname: {{ .Release.Name }}-pv
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "nats-stream.fullname" . }}
+  labels:
+    app: {{ include "nats-stream.name" . }}
+    chart: {{ include "nats-stream.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  containers:
+  - name: nats-streaming
+    image: {{ .Values.image }}
+    args: ['-cid=test-cluster','--max_bytes=1GB','--store=FILE','--dir=/data/nats-stream','--file_sync=false']
+    volumeMounts:
+    - mountPath: /data
+      name: data-volume
+  volumes:
+  - name: data-volume
+    persistentVolumeClaim:
+      claimName: {{ .Release.Name }}-pvc
