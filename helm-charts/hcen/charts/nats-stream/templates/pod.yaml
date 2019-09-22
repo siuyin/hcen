@@ -8,9 +8,10 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-pv
+  name: {{ .Release.Name }}-nats-stream-pv
   labels:
-    pvname: {{ .Release.Name }}-pv
+    pvname: {{ .Release.Name }}-nats-stream-pv
+    sys: {{ .Values.global.sysName }}
 spec:
   capacity:
     storage: 1Gi
@@ -19,7 +20,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   local:
-    path: "/data/{{ .Release.Name }}"
+    path: "/data/{{ .Release.Name }}/nats-stream"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -27,12 +28,14 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - {{ .Values.statefulHostName }}
+          - {{ .Values.global.statefulHostName }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-pvc
+  name: {{ .Release.Name }}-nats-stream-pvc
+  labels:
+    sys: {{ .Values.global.sysName }}
 spec:
   accessModes:
     - ReadWriteMany
@@ -42,7 +45,7 @@ spec:
   storageClassName: local-storage
   selector:
     matchLabels:
-      pvname: {{ .Release.Name }}-pv
+      pvname: {{ .Release.Name }}-nats-stream-pv
 ---
 apiVersion: v1
 kind: Pod
@@ -53,15 +56,16 @@ metadata:
     chart: {{ include "nats-stream.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    sys: {{ .Values.global.sysName }}
 spec:
   containers:
   - name: nats-streaming
     image: {{ .Values.image }}
-    args: ['-cid=test-cluster','--max_bytes=1GB','--store=FILE','--dir=/data/nats-stream','--file_sync=false']
+    args: ['-cid=test-cluster','--max_bytes=1GB','--store=FILE','--dir=/data','--file_sync=false']
     volumeMounts:
     - mountPath: /data
       name: data-volume
   volumes:
   - name: data-volume
     persistentVolumeClaim:
-      claimName: {{ .Release.Name }}-pvc
+      claimName: {{ .Release.Name }}-nats-stream-pvc

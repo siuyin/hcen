@@ -16,7 +16,8 @@ deploy:
     - name: hcen-dev
       chartPath: helm-charts/hcen
       values:
-        image: siuyin/hcen
+        imagePos: siuyin/hcen-pos
+        imageRec: siuyin/hcen-rec
       valuesFiles:
         - helm-charts/hcen/values-dev.yaml
       setValues:
