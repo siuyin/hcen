@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/siuyin/dflt"
+)
 
 func main() {
-	fmt.Println("HCEN: Point of Sale")
+	stage := dflt.EnvString("STAGE", "Test")
+	fmt.Printf("HCEN %s: Point of Sale\n", stage)
 }
