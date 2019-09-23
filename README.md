@@ -3,6 +3,9 @@
 A Hyper-Converged Edge Node processes business transactional data
 and censor data at the location where the data is created or captured.
 
+## Motivation
+Medium Iron with kubernetes deployment.
+
 ## Components
 This software comprises:
 1. An event store to capture and distribute events (implemented with NATS Streaming)
