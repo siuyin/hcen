@@ -22,6 +22,8 @@ deploy:
         - helm-charts/hcen/values-dev.yaml
       setValues:
         stage: Test
+      setValueTemplates:
+        DB2Password: "{{ .DB2_PASSWORD }}" # pulled from the environment
 profiles:
 - name: prod
   deploy:
@@ -35,3 +37,5 @@ profiles:
           - helm-charts/hcen/values-prod.yaml
         setValues:
           stage: Live
+        setValueTemplates:
+          DB2Password: "{{ .DB2_PASSWORD }}"
