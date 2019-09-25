@@ -63,6 +63,10 @@ spec:
         #Need the default Docker capabilities. Additional ones are "SYS_RESOURCE", "IPC_OWNER", "SYS_NICE"
         add: ["SYS_RESOURCE", "IPC_OWNER", "SYS_NICE", "SETPCAP", "CHOWN", "FOWNER", "NET_RAW", "DAC_OVERRIDE", "FSETID", "KILL", "SETGID", "SETUID", "MKNOD", "AUDIT_WRITE", "SYS_CHROOT", "NET_BIND_SERVICE", "SETFCAP"]
       allowPriviledgeEscalation: true
+      priviledged: false
+      readOnlyRootFilesystem: false
+      runAsNonRoot: false
+      runAsUser: 0
     env:
     - name: LICENSE
       value: accept

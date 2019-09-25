@@ -23,7 +23,7 @@ deploy:
       setValues:
         stage: Test
       setValueTemplates:
-        DB2Password: "{{ .DB2_PASSWORD }}" # pulled from the environment
+        db2.db2Password: "{{ .DB2_PASSWORD }}"
 profiles:
 - name: prod
   deploy:
