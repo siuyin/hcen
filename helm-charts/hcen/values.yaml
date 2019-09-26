@@ -4,7 +4,7 @@
 
 global:
   sysName: hcen
-  statefulHostName: ubkube
+  statefulHostName: minikube
 
 nameOverride: ""
 fullnameOverride: ""
