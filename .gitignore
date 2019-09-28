@@ -1,3 +1,4 @@
 *.swp
 *secret*
 bin
+**/db2-hello/db2-hello
