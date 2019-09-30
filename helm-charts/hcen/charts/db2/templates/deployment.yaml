@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-db2-pv
+  labels:
+    pvname: {{ .Release.Name }}-db2-pv
+    sys: {{ .Values.global.sysName }}
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: "/data/{{ .Release.Name }}/db2"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - {{ .Values.global.statefulHostName }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-db2-pvc
+  labels:
+    sys: {{ .Values.global.sysName }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-storage
+  selector:
+    matchLabels:
+      pvname: {{ .Release.Name }}-db2-pv
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "db2.fullname" . }}
+  labels:
+    app: {{ include "db2.name" . }}
+    chart: {{ include "db2.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    sys: {{ .Values.global.sysName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "db2.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      name: {{ include "db2.fullname" . }}
+      labels:
+        app: {{ include "db2.name" . }}
+        chart: {{ include "db2.chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+        sys: {{ .Values.global.sysName }}
+    spec:
+      containers:
+      - name: db2
+        image: {{ .Values.image }}
+        ports:
+        - containerPort: 50000
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+            #Need the default Docker capabilities. Additional ones are "SYS_RESOURCE", "IPC_OWNER", "SYS_NICE"
+            add: ["SYS_RESOURCE", "IPC_OWNER", "SYS_NICE", "SETPCAP", "CHOWN", "FOWNER", "NET_RAW", "DAC_OVERRIDE", "FSETID", "KILL", "SETGID", "SETUID", "MKNOD", "AUDIT_WRITE", "SYS_CHROOT", "NET_BIND_SERVICE", "SETFCAP"]
+          allowPriviledgeEscalation: true
+          priviledged: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: false
+          runAsUser: 0
+        env:
+        - name: LICENSE
+          value: accept
+        - name: DB2INST1_PASSWORD
+          value: {{ .Values.db2Password | quote }}
+        - name: DBNAME
+          value: {{ .Values.dbName }}
+        volumeMounts:
+        - mountPath: /database
+          name: data-volume
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-db2-pvc
