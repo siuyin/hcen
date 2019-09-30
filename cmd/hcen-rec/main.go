@@ -14,7 +14,8 @@ func main() {
 	stage := dflt.EnvString("STAGE", "Test")
 	fmt.Printf("HCEN %s: Recommendations and price check", stage)
 
-	con := "HOSTNAME=hcen-dev-db2;DATABASE=testdb;PORT=50000;UID=db2inst1;PWD=abc123"
+	passwd := dflt.EnvString("DB2_PASSWORD", "aPassword")
+	con := fmt.Sprintf("HOSTNAME=hcen-dev-db2;DATABASE=testdb;PORT=50000;UID=db2inst1;PWD=%s", passwd)
 	db, err := sql.Open("go_ibm_db", con)
 	if err != nil {
 
