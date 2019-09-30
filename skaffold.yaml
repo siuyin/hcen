@@ -24,7 +24,7 @@ deploy:
       setValues:
         stage: Test
       setValueTemplates:
-        db2.db2Password: "{{ .DB2_PASSWORD }}"
+        global.db2Password: "{{ .DB2_PASSWORD }}"
         global.statefulHostName: "{{ .SFHOST }}" # stateful hostname
 profiles:
 - name: prod
