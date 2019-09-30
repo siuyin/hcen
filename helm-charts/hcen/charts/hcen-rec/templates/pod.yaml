@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-rec
+  labels:
+    app: {{ include "hcen-rec.name" . }}
+    chart: {{ include "hcen-rec.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    sys: {{ .Values.global.sysName }}
+spec:
+  containers:
+    - name: {{ .Chart.Name }}
+      image: "{{ .Values.image }}"
+      ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+      livenessProbe:
+        httpGet:
+          path: /
+          port: http
+      readinessProbe:
+        httpGet:
+          path: /
+          port: http
