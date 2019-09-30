@@ -24,7 +24,7 @@ func main() {
 	}
 	db.Close()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello World.")
+		fmt.Fprintf(w, "Hello POS World.")
 	})
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
