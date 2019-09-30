@@ -13,9 +13,12 @@ spec:
     - name: {{ .Chart.Name }}
       image: "{{ .Values.image }}"
       ports:
-        - name: http
-          containerPort: 8080
-          protocol: TCP
+      - name: http
+        containerPort: 8080
+        protocol: TCP
+      env:
+      - name: DB2_PASSWORD
+        value: {{ .Values.global.db2Password }}
       livenessProbe:
         httpGet:
           path: /

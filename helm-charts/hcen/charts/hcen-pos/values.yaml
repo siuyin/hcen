@@ -4,6 +4,7 @@
 
 global:
   sysName: hcen-pos
+  db2Password: aPassword
 
 image: siuyin/hcen-pos
 

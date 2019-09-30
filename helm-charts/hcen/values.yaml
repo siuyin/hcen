@@ -5,6 +5,7 @@
 global:
   sysName: hcen
   statefulHostName: minikube
+  db2Password: aPassword
 
 nameOverride: ""
 fullnameOverride: ""
