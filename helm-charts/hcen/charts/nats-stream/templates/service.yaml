@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "nats-stream.fullname" . }}
+  name: {{ .Release.Name }}-nats
   labels:
     app: {{ include "nats-stream.name" . }}
     chart: {{ include "nats-stream.chart" . }}
@@ -12,9 +12,9 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: 4222
       protocol: TCP
-      name: http
+      name: nats
   selector:
     app: {{ include "nats-stream.name" . }}
     release: {{ .Release.Name }}

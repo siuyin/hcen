@@ -34,6 +34,8 @@ spec:
           env:
           - name: DB2_PASSWORD
             value: {{ .Values.global.db2Password }}
+          - name: NATS_URL
+            value: "nats://{{ .Release.Name }}-nats:4222"
           livenessProbe:
             httpGet:
               path: /
