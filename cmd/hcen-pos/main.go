@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	_ "github.com/ibmdb/go_ibm_db"
+	"github.com/nats-io/stan.go"
 
 	"github.com/siuyin/dflt"
 )
@@ -22,7 +23,17 @@ func main() {
 
 		fmt.Println(err)
 	}
-	db.Close()
+	defer db.Close()
+
+	clientID := "hcen-pos"
+	clusterID := "test-cluster"
+	natsURL := dflt.EnvString("NATS_URL", "nats://hcen-dev:4222")
+	sc, err := stan.Connect(clusterID, clientID, stan.NatsURL(natsURL))
+	if err != nil {
+		log.Fatalf("Could not connect to NATS at %s: %v", natsURL, err)
+	}
+	defer sc.Close()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello POS World.")
 	})

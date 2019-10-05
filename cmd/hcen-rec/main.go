@@ -15,10 +15,10 @@ func main() {
 	fmt.Printf("HCEN %s: Recommendations and price check", stage)
 	clientID := "hcen-rec"
 	clusterID := "test-cluster"
-	natsURL := dflt.EnvString("NATS_URL", "nats://hcen-dev:4222")
+	natsURL := dflt.EnvString("NATS_URL", "nats://hcen-dev-nats:4222")
 	sc, err := stan.Connect(clusterID, clientID, stan.NatsURL(natsURL))
 	if err != nil {
-		log.Fatalf("Could not connect to NATS at %s", natsURL)
+		log.Fatalf("Could not connect to NATS at %s: %v", natsURL, err)
 	}
 	defer sc.Close()
 

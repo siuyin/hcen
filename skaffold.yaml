@@ -1,4 +1,4 @@
-apiVersion: skaffold/v1beta11
+apiVersion: skaffold/v1beta15
 kind: Config
 build:
   artifacts:
@@ -41,3 +41,4 @@ profiles:
           stage: Live
         setValueTemplates:
           DB2Password: "{{ .DB2_PASSWORD }}"
+          global.statefulHostName: "{{ .SFHOST }}" # stateful hostname
